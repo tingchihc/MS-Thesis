@@ -1,0 +1,16 @@
+In our assumption, we consider the multimodal multi-document claims to be entirely entailed with news articles, images, and videos, as these claims are generated from multimodal knowledge graphs. To verify this assumption, we tested the generated claims using our~\textbf{MetaSumPerceiver} model. When the claim and multimodal multi-document sources are provided to the model, it determines whether the claim is entailed by the news using the entailment model. In Table~\ref{label:claim_label}, 74.3\% of our claims are confirmed to be entailed with news articles, indicating a definite connection with the sources. Additionally, 8.24\% of our claims are categorized as neutral, meaning that the content does not contradict the news, but further consideration is needed to determine the accuracy of the relationships in these claims. Finally, 17.46\% of our claims are contradiction claims, clearly indicating that these claims are unrelated to the news. The reason behind this is that the content of these claims revolves around advertisements in news articles.
+
+The results provide insights that differ from our initial assumption. We suspect that the discrepancy may arise from the edge labels in the knowledge graphs. We believe it's essential to introduce additional edge labels to categorize less important information. This approach would help us steer clear of certain edges and nodes during the traversal of knowledge graphs.
+
+\begin{table}[h]\Large
+\centering
+\caption{Accuracy for prompting entailment, neutral, contradiction claims with Llama-2-70b in Multi-News-Fact-Checking dataset.}
+\begin{tabular}{l|c}
+\hline
+\textbf{Claims}      & \textbf{Accuracy(\%)} \\ \hline
+Entailment claims    & 78.3          \\
+Nentral claims       & 64.2          \\
+Contradiction claims & 74.1          \\ \hline
+\end{tabular}
+\label{label:prompt_accuracy}
+\end{table}

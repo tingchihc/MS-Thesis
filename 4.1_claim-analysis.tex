@@ -1,0 +1,16 @@
+To assess the effectiveness of~\textbf{KG2Claim}, we evaluate the generated claims with the check-worthy classification task. In Table~\ref{label:claim_detect}, 68.6\% of the sentences identified as check-worthy factual sentences (CFS) originate from our approach. This suggests that our generated claims encompass factual information that the general public would find interesting and worth verifying. Additionally, 17.67\% of sentences in our dataset are factual but deemed unimportant for fact-checking (UFS), indicating a lack of public interest in these claims. Finally, 13.71\% of sentences in our data are non-factual (NFS), primarily comprising questions, beliefs, and declarations. 
+
+The results reveal two main points. Firstly, we effectively integrate multimodal multi-document sources, as over 60\% of our generated claims focus on public interest. This indicates that our traversal algorithm is well-suited for knowledge graphs. Secondly, the content of our generated claims is closely tied to the US election in the ClaimBuster dataset~\cite{arslan2020benchmark}, specifically in the policy domain rather than other areas.
+
+\begin{table}[h]\Large
+\centering
+\caption{Performance of detecting truthfulness label in Multimodal Multi-document claims.}
+\begin{tabular}{l|c}
+\hline
+\textbf{Truthfulness labels}                    & \textbf{Category percentage(\%)}  \\\hline
+Entailment label &  74.3  \\
+Neutral label &   8.24     \\
+Contradiction label &  17.46 \\\hline
+\end{tabular}
+\label{label:claim_label}
+\end{table}

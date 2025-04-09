@@ -1,0 +1,50 @@
+\begin{table}[]\Large
+\centering
+\caption{ Performance of claim verification in MOCHEG with our method. We separately calculate the precision and recall in supported, refuted, and NEI claim labels. We compare our method with published baselines in Table~\ref{label:claim_verification_fscore_MOCHEG}.}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{l|ccccccc}\hline
+\textbf{Setting}      & \textbf{Accuracy (\%)} & \textbf{\begin{tabular}[c]{@{}c@{}}Precision (\%)\\ Supported\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Precision (\%)\\ Refuted\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Precision (\%)\\ NEI\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Recall (\%)\\ Supported\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Recall (\%)\\ Refuted\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Recall (\%)\\ NEI\end{tabular}} \\
+\hline
+Our w/ Text Evidence $\rightarrow$ DeBERTa V3  & 43.7 & 79.2 & 66.9 & \textbf{33.9} & 40.5 & 30.6 & 25.8\\
+Our w/ Text and Image Evidence $\rightarrow$ DeBERTa V3 & 50.8 & 83.4 & \textbf{69.3} & 27.3 & 42.9 & 34.2 & 30.9\\
+Our w/ Text Evidence $\rightarrow$ Llama 2  & 46.7 & 80.4 & 68.1 & 31.5 & 37.2 & 35.4 & 31.5\\
+Our w/ Text and Image Evidence $\rightarrow$ Llama 2 & \textbf{53.7} & \textbf{87.3} & 60.3 & 32.4 & \textbf{48.3} & \textbf{36.9} & \textbf{34.8} \\
+Our w/Text Evidence $\rightarrow$ Stance detection model & 40.5& 79.4& 68.3& 32.3& 43.7& 34.2& 14.4\\
+Our w/ Text and Image Evidence $\rightarrow$ Stance detection model & 45.4& 76.8& 66.9& 34.7& 35.7& 36.2& 30.9\\
+\hline
+\end{tabular}}
+\label{label:MOCHEG}
+\end{table}
+
+The goal of our method is to generate a summary from multiple documents and modalities that is useful for fact-checking a claim. In order to assess how useful our method is at this task, we compare the performance of our method on MOCHEG, which presents a benchmark and method for multimodal multi-document fact-checking.
+
+Specifically, we employed three~\textit{fixed} entailment models, namely DeBERTa V3~\cite{he2023debertav3}, Llama-2-70b~\cite{touvron2023llama}, and stance detection model~\cite{Yao_2023}, as our surrogate "human" fact-checkers. The goal of these models is to predict the entailment label of a claim given our generated summary. Importantly, we do not finetune these models with our generated summaries so as to not bias the models towards linguistic or stylistic patterns of the summarizer. As depicted in Tables~\ref{label:MOCHEG} and~\ref{label:claim_verification_fscore_MOCHEG}, our method exhibits superior performance, achieving a SOTA 48.2 F-score in the MOCHEG dataset. Furthermore, according to Table~\ref{label:MOCHEG}, our method demonstrates strong precision performance for the "supported" label and strong recall performance in the "supported", "NEI", and "refuted" labels.
+
+
+\begin{table}[!th]\large
+\centering
+\caption{Performance of claim verification in MOCHEG. DeBERTa V3, Llama-2-70b, and the stance detection model represent the fixed entailment models. Gold Evidence denotes ground truth text and image evidence while System Evidence means automatically retrieved text and image evidence.}
+\begin{tabular}{l|c}
+\hline
+\textbf{Setting}                       & \textbf{F-score (\%)} \\ \hline
+Our w/ Text Evidence $\rightarrow$ DeBERTa V3           & 42.7                   \\
+Our w/ Text and Image Evidence $\rightarrow$ DeBERTa V3 & 45.1                   \\
+Our w/ Text Evidence $\rightarrow$ Llama 2           & 43.9                 \\
+Our w/ Text and Image Evidence $\rightarrow$ Llama 2 & \textbf{48.2}                   \\
+Our w/Text Evidence $\rightarrow$ Stance detection model & 41.8\\
+Our w/ Text and Image Evidence $\rightarrow$ Stance detection model & 43.3\\
+\hline
+MOCHEG w/ Text Evidence                 & 42.7                \\
+MOCHEG w/ Image Evidence                & 40.9                \\
+MOCHEG w/ Text and Image Evidence       & \textbf{44.0}                \\ \hline
+Human w/o Evidence                      & 20.0                \\
+Human w/ System Evidence                & 62.0                \\
+Human w/ Gold Evidence                  & \textbf{70.0}                \\ \hline
+\end{tabular}
+\label{label:claim_verification_fscore_MOCHEG}
+\end{table}
+
+Table~\ref{label:MOCHEG} reveals that the best results are achieved when inputs incorporate both textual and image evidence. Perhaps unsurprisingly given its size, the zero-shot Llama-2-70b entailment surrogate model surpasses DeBERTa V3 in performance. Nevertheless, a notable issue persists, where the surrogate entailment models struggle to accurately deal with NEI claim labels.
+
+Table~\ref{label:claim_verification_fscore_MOCHEG} highlights the superiority of our model compared to MOCHEG. In the case of MOCHEG, truthfulness labels are predicted by averaging a stance representation derived from both textual and image evidence. Furthermore, MOCHEG's classifier relies on fixed thresholds, which may not be optimal for every situation. In contrast, our approach involves generating summaries for fact-checking via reinforcement learning with fixed entailment models. Although a difference remains in the result of human vs system prediction performance, our model surpasses the prior state-of-the-art system by 4.2\% F-score.
+

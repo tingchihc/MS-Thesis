@@ -1,0 +1,31 @@
+To produce multimodal multi-document claims from Knowledge Graphs (KGs), we devise a traversal method specifically tailored for KGs featuring coreference relationships (:coref). The traversal method is detailed in Algorithm~\ref{alg:one}. Additionally, we utilize the AMRBART model~\cite{bai2022graph} to generate multimodal multi-document claims based on the information extracted from the knowledge graphs. AMRBART is a BART~\cite{lewis2019bart} model pretrained on AMR graphs by introducing graph self-supervised training. AMRBART utilizes two graph auto-encoding strategies for graph-to-graph pre-training and integrating text and graph information through four tasks.
+
+We feed the traversal results into AMRBART to generate the text. The~\textbf{KG2Claim} method is a text generation method for our detecting disinformation project. We totally generated 816,115 multimodal multi-document claims in the NewsStories dataset. This method focuses on detailing the processing of text representation and traversal algorithms involving coreference relationships.
+
+\begin{algorithm}[H]
+\caption{Traversal algorithm}\label{alg:one}
+\begin{algorithmic}[1]
+
+\State Input: Graph $G$ includes sets of (h,r,t) triple
+\State Outputs: Set of triples with the coreference relationships (:coref)
+\State Search all predicate nodes $\mathrm{P}$ that have :ARG relationships 
+\For{$\mathrm{p} \in \mathrm{P}$}
+    \State Traversal results = CorefDFS(G, p)
+\EndFor
+
+\Function{CorefDFS}{Graph, start, visited=None}
+    \State visited = set()
+    \State Stack=[start]
+    \While {Stack}
+        \State vertex = Stack.pop()
+        \If {vertex not in visited}
+            \State visited.append(vertex)
+            \State neighbors = sort(Graph[vertex], key=:coref, reverse=True)
+            \State Stack.append(neighbor for neighbor in neighbors if neighbor not in visited)
+        \EndIf
+    \EndWhile
+    \State \Return Stack
+\EndFunction 
+
+\end{algorithmic}
+\end{algorithm}

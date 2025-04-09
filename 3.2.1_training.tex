@@ -1,0 +1,41 @@
+We explain the details of our approach,~\textbf{MetaSumPerceiver} in Figure~\ref{fig:metaover}, as well as how we construct our Multi-News-Fact-Checking dataset as illustrated. We also describe the preprocessing steps for both text and image data, the components of our model, and the reinforcement learning methodology we applied to train~\textbf{MetaSumPerceiver}. Our approach is capable of summarizing multiple multimodal documents consisting of arbitrarily long texts and images. Specifically, we use $x_C$, $x_D$, and $x_I$ to represent embeddings for claims, documents, and images, respectively.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth, height=\textwidth, keepaspectratio]{images/pipeline_3.2.pdf}
+  \caption{Overview of MetaSumPerceiver: This figure illustrates the process of generating a summary for fact-checking using MetaSumPerceiver, integrating a fixed entailment model for accurate truthfulness labeling. Furthermore, it highlights how PPO is employed to continually refine the summary during the fact-checking process.}
+  \label{fig:metaover}
+\end{figure*}
+
+For the textual data, we use BART~\cite{lewis2019bart}~\footnote{ \url{https://huggingface.co/facebook/bart-large-cnn}.}  to obtain text embeddings following~\cite{devlin-etal-2019-bert,liu2019roberta}. As a result, each input text is transformed into a set of token embeddings $x_C \in \mathbb{R}^{n \times D}$ and $x_D \in \mathbb{R}^{m \times D}$, where $n$ and $m$ are the number of tokens and $D$ is the dimension of embedding. We use CLIP (ViT-G-14)~\cite{radford2021learning} to extract visual features for the images. Finally, each input image undergoes a transformation, resulting in a set of visual embeddings. $x_I \in \mathbb{R}^{k \times D}$, where $k$ is the number of tokens and $D$ is the dimension of the embedding.
+
+Our goal is to generate a textual summary of a set of multimodal documents that enables a fact-checker to determine the veracity of a claim. In order to select relevant visual content from the images, we begin by performing a cross-attention between the images and the claim:
+
+\begin{equation}
+  \begin{array}{l}
+    X_{IC}= ATTN(Q_{x_C}, K_{x_I}, V_{x_I}) \;,
+  \end{array}
+\end{equation}
+
+where the query $Q_{x_C}$ is the claim's sequence of embeddings and $K_{x_I}$ and $V_{x_I}$ are the embedding sequences of visual tokens from the images. We project $X_{IC}$ into the document embedding $X_D$, which serves as the input for~\textbf{MetaSumPerceiver}.
+
+The output from the cross-attention block, $X_{IC}$, is initially projected by a linear projection layer with the weight $\theta$. It is then concatenated with $x_D$, as depicted in the subsequent equation:
+
+\begin{equation}
+  \begin{array}{l}
+  X_{ICD} = 
+  \begin{bmatrix}
+    proj(X_{IC}, \theta)^\intercal , X_D ^\intercal 
+  \end{bmatrix}^\intercal,
+  \end{array}
+\end{equation}
+
+where $X_{ICD}$ will be the input to~\textbf{MetaSumPerceiver}. Prior to training our full model, we pretrain our attention block and summarization model using the Multi-News dataset's human written summaries using the cross-entropy loss function:
+
+\begin{equation}
+  \begin{array}{l}
+    \mathcal{L}_{\text{sum}} = -\sum_{t=1}^{T} \sum_{i=1}^{N} y_{t_i} \log(\hat{y}_{t_i}),
+  \end{array}
+\end{equation}
+
+where $T$ represents the sequence length, $N$ is the vocabulary size, and $y_{t_i}$ and $\hat{y}_{t_i}$ denote the ground truth and predicted probabilities of token $i$ at time step $t$, respectively. In the remaining text, we omit the summation over the vocabulary for conciseness.

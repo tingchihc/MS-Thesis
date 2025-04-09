@@ -1,0 +1,26 @@
+Additionally, we conducted ablation experiments for claim verification on our Multi-News-Fact-Checking dataset. A comparative analysis of our method with Llama-2-70b and other offline summarization models, PEGASUS~\cite{zhang2020pegasus} and T5 large~\cite{2020t5}, is presented in Tables~\ref{label:multi-news_fscore} and~\ref{label:multi-news}.
+
+Similar to our results in MOCHEG, Tables~\ref{label:multi-news_fscore} and~\ref{label:multi-news} show that our approach, when employing the Llama-2 surrogate entailment model, achieves the best performance. Furthermore, we achieve balanced accuracy in both precision and recall, underscoring our method's ability to clearly differentiate between truthful and untruthful labels without bias in predictions. The results highlight the inability of other summarization models to generate summaries useful for fact-checking, which causes the surrogate model difficulty in accurately assessing the truthfulness labels.
+
+We also established human performance upper bounds on our Multi-News-Fact-Checking dataset following MOCHEG's methodology. We randomly sampled 200 claims and assigned labels for their truthfulness based on gold evidence (the human written summaries from which the claims were generated), system evidence (our generated summaries), and no evidence, resulting in F-scores of 0.76, 0.65, and 0.23, respectively.
+
+\begin{table}[h]\small
+\centering
+\caption{Performance of claim verification in Multi-News-Fact-Checking dataset. DeBERTa V3 and Llama-2-70b serve as the fixed entailment models. Gold Evidence refers to claim labels based on gold standards, whereas System Evidence indicates our predicted claim labels.}
+\begin{tabular}{l|c}
+\hline
+\textbf{Setting}             & \textbf{F-score (\%)} \\\hline
+Our w/ DeBERTa V3               & 39.9                 \\
+Our w/ Llama 2               & \textbf{43.4}        \\
+Our w/ Llama 2(No RL)               & 41.8            \\\hline
+PEGASUS w/ DeBERTa V3           & 25.4                 \\
+PEGASUS w/ Llama 2           & \textbf{30.8}            \\\hline
+T5 large w/ DeBERTa V3          & 28.5            \\
+T5 large w/ Llama 2          & \textbf{32.7}            \\\hline
+Human w/o Evidence           & 23.0            \\
+Human w/ System Evidence     & 65.0               \\
+Human w/ Gold Evidence       & \textbf{76.0}               \\ \hline
+\end{tabular}
+\label{label:multi-news_fscore}
+\end{table}
+
